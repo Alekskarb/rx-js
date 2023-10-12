@@ -1,35 +1,12 @@
-console.log(rxjs)
+const btn = document.querySelector('button');
+const input = document.querySelector('input');
+// btn.addEventListener('click', (e) => {console.log(e)})
+// const button$ = rxjs.Observable.create()
+const button$ = rxjs.fromEvent(btn,'click')
+const input$ = rxjs.fromEvent(input,'keydown')
+const document$ = rxjs.fromEvent(document,'mousemove')
 
-const stream$ = rxjs.Observable.create(observer => {
-    observer.next('One');
-    setTimeout(() => {
-        // observer.next('After 4 sec!');
-        observer.error('After 4 sec - ERROR!');
-
-    }, 4000)
-    setTimeout(() => {
-        observer.next('After 2 sec!');
-
-    }, 2000)
-    // observer.complete();
-    observer.next('Two');
-})
-
-stream$.subscribe(
-    data => {console.log('Subscribe: ', data)},
-    error => {console.log('Error: ', error)},
-    complete => {console.log('Complete: ', complete)}
-)
-// const stream$ = rxjs.Observable
-// const {Observable} = require('rxjs') //second way
-// const wrapArrayIntoObservable = arr => {
-//     return new stream$(subscriber => {
-//         for(let item of arr) {
-//             subscriber.next(item);
-//         }
-//     });
-// }
-// const data = [1, 2, 3, 4, 5];
-// const observable = wrapArrayIntoObservable(data);
-// observable.subscribe(val => console.log('Subscriber 1: ' + val));
-// observable.subscribe(val => console.log('Subscriber 2: ' + val));
+button$.subscribe(e => {console.log(e)})
+input$.subscribe(e => {console.log(e)})
+document$.subscribe(e => {
+    document.querySelector('h2').innerHTML = `X: ${e.clientX}, Y: ${e.clientY}`})
