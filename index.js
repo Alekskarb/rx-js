@@ -1,3 +1,7 @@
+// import * as rxjs from "rxjs";
+// import {take} from "rxjs";
+// import {rxjs} from "rxjs";
+
 const setSubscriber = (operatorName) => {
     return {
         next(x) {
@@ -11,31 +15,25 @@ const setSubscriber = (operatorName) => {
         }
     }
 }
-const arrObj = [
-    {id: 1, name: 'alex'},
-    {id: 1, name: 'tania'},
-    {id: 1, name: 'pavel'},
-    {id: 1, name: 'illya'}
-]
-// const set = new Set([1,2,3,'4', {id:0}])
-const set = new Map([[1, 2], [3, 4], ['5', '6']])
 
-// rxjs.from([1,3,5,7,9])
-// rxjs.from(arrObj)
-rxjs.from(set)
-    .subscribe(setSubscriber('from'))
+// operator MAP =
 
-const delay = (ms = 1000) => {
-    return new Promise((res, rej) => {
-        setTimeout(() => {
-            res(ms)
-        }, 1500)
-    })
-}
+// rxjs.interval(150)
+// rxjs.of('hello', 'entire', 'world!')
+//     .pipe(rxjs.map(
+//         x => x.toUpperCase()
+//     ), rxjs.take(10)).subscribe(
+//     setSubscriber('map')
+// )
 
-delay(2000).then(() => {
-    console.log('Promise was resolved!')
-})
-
-const promise$ = rxjs.from(delay(2000))
-    .subscribe(setSubscriber('fromPromise'))
+rxjs.fromEvent(document.querySelector('input'), 'keyup')
+    .pipe(
+        // rxjs.map(x => x.target.value),
+        rxjs.pluck('target', 'value'),
+        rxjs.map(x => x.toUpperCase()),
+        rxjs.map(x => {
+            return {value: x, length: x.length}
+        }))
+    .subscribe(
+        setSubscriber('map')
+    )
