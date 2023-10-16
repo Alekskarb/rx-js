@@ -12,16 +12,22 @@ const setSubscriber = (operatorName) => {
     }
 }
 
-// rxjs.interval(500)
-// .pipe(rxjs.buffer(rxjs.interval(2000)),
-// // .pipe(rxjs.bufferTime(2000),
-//     rxjs.take(4)
-// ).subscribe(setSubscriber('buffer'))
-//
-// rxjs.range(0, 40)
-//     .pipe(rxjs.bufferCount(10)
-// ).subscribe(setSubscriber('bufferCount'))
+rxjs.of()
+    .pipe(rxjs.defaultIfEmpty('Some mess')
+    ).subscribe(setSubscriber('defaultIfEmpty'))
 
-rxjs.interval(500)
-    .pipe(rxjs.buffer(rxjs.fromEvent(document, 'click'))
-).subscribe(setSubscriber('bufferClick'))
+// rxjs.from([1,2,3,4,5])
+rxjs.range(1, 3)
+    // .pipe(rxjs.every(el => el % 2 === 0)
+    // .pipe(rxjs.tap(el => console.log(el)),
+    .pipe(rxjs.map(x => x * x),
+        // rxjs.delay(1000)
+    ).subscribe(setSubscriber('every'))
+
+
+rxjs.range(1, 3)
+    // .pipe(rxjs.every(el => el % 2 === 0)
+    // .pipe(rxjs.tap(el => console.log(el)),
+    // .map(x => x + x)
+    .pipe(observer => observer.map(x => x * x)
+    ).subscribe(setSubscriber('every'))
