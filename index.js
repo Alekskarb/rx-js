@@ -1,4 +1,6 @@
 // const {take} = require("rxjs");
+// import {concat, interval, take} from "rxjs";
+
 const setSubscriber = (operatorName) => {
     return {
         next(x) {
@@ -31,9 +33,16 @@ rxjs.range(1,3).pipe(
     rxjs.mergeAll())
     .subscribe(setSubscriber('mergeAll'))
 
+const timer1 = rxjs.interval(1000).pipe(rxjs.take(10));
+const timer2 = rxjs.interval(2000).pipe(rxjs.take(6));
+const timer3 = rxjs.interval(500).pipe(rxjs.take(10));
+
+const result = rxjs.concat(timer1, timer2, timer3);
+result.subscribe(x => console.log(x));
+
 const stream5$ = rxjs.from(['Hello'])
 const stream6$ = rxjs.from(['World'])
-stream5$.pipe(
+stream6$.pipe(
 //     rxjs.concat(stream5$, stream6$)
-rxjs.concatWith(stream6$))
+rxjs.concatWith(stream5$))
     .subscribe(setSubscriber('concat'))
