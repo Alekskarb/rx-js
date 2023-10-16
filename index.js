@@ -1,7 +1,3 @@
-// import * as rxjs from "rxjs";
-// import {take} from "rxjs";
-// import {rxjs} from "rxjs";
-
 const setSubscriber = (operatorName) => {
     return {
         next(x) {
@@ -15,25 +11,29 @@ const setSubscriber = (operatorName) => {
         }
     }
 }
-
-// operator MAP =
-
-// rxjs.interval(150)
-// rxjs.of('hello', 'entire', 'world!')
-//     .pipe(rxjs.map(
-//         x => x.toUpperCase()
-//     ), rxjs.take(10)).subscribe(
-//     setSubscriber('map')
-// )
+const cars = [
+    {name: 'audi', price: 40000},
+    {name: 'volvo', price: 30000},
+    {name: 'seat', price: 20000},
+]
 
 rxjs.fromEvent(document.querySelector('input'), 'keyup')
-    .pipe(
-        // rxjs.map(x => x.target.value),
-        rxjs.pluck('target', 'value'),
-        rxjs.map(x => x.toUpperCase()),
-        rxjs.map(x => {
-            return {value: x, length: x.length}
-        }))
-    .subscribe(
-        setSubscriber('map')
+    .pipe(rxjs.map(e => e.target.value))
+    .subscribe( x => rxjs.from(cars)
+            .pipe(rxjs.filter(car => car.name === x))
+            .subscribe(v => {
+                document.querySelector('div').innerHTML = `<h2>${v.name.toUpperCase()}</h2><h4>${v.price}</h4>`
+            })
+        // setSubscriber('filter')
     )
+
+ rxjs.fromEvent(document.querySelector('input'), 'keyup')
+    .pipe(rxjs.map(e => e.target.value),
+        // rxjs.debounceTime(1000)
+        rxjs.distinct()
+    )
+     .subscribe(setSubscriber('debounceTime'))
+
+rxjs.from([1,2,3,4,4,4,45,8,9,87, 'keyup'])
+    .pipe(rxjs.distinctUntilChanged())
+     .subscribe(setSubscriber('debounceTime'))
