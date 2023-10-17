@@ -1,3 +1,5 @@
+// import Rx from "https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js";
+
 const setSubscriber = (operatorName) => {
     return {
         next(x) {
@@ -11,35 +13,34 @@ const setSubscriber = (operatorName) => {
         }
     }
 }
+//ZIP
+const s1$ = rxjs.of('Hello ')
+const s2$ = rxjs.of('World!')
+const interval$ = rxjs.interval(1000);
+const interval2$ = rxjs.interval(500).pipe(rxjs.take(3))
 
-rxjs.of('Hello ').subscribe(x => {
-    rxjs.of(x + 'World1!').subscribe(setSubscriber('mergeMap'))
-})
+rxjs.zip(s1$, s2$).subscribe(
+   setSubscriber('zip'));
+
+// rxjs.zip(interval$, interval2$)
 // ALTernative
+// rxjs.zip(interval$, interval$.pipe(rxjs.take(3)))
+rxjs.zip(interval$, interval$.pipe(rxjs.take(3)), rxjs.of('wfm'))
+    .subscribe(
+        setSubscriber('zip'))
 
-rxjs.of('Hello ')
-    .pipe(rxjs.mergeMap(x => {
-        return rxjs.of(x + 'World2!')
-    }))
-    .subscribe(setSubscriber('mergeMap'))
+const int1$ = rxjs.interval(1000);
+const int2$ = rxjs.interval(500);
 
-const promise = (data) => {
-    return new Promise((res, rej) => {
-        setTimeout(() => {
-            res(data + ' wish me luck');
-        }, 2000)
-    })
-}
+// withLatestFrom
+// const result = clicks.pipe(withLatestFrom(timer));
+int1$.pipe(rxjs.withLatestFrom(int2$), rxjs.take(5))
+    .subscribe(setSubscriber('withLatestFrom'))
 
-rxjs.of('WFM')
-    .pipe(rxjs.mergeMap((x) => {
-        return promise(x)
-    })).subscribe(setSubscriber('promise'))
+// combineLatest
+const timer1$ = rxjs.timer(1000, 2000);
+const timer2$ = rxjs.timer(2000, 2000);
+const timer3$ = rxjs.timer(3000, 2000);
 
-rxjs.range(1,10)
-    .pipe(rxjs.concatMap((x, index) => {
-        return rxjs.interval(200).pipe(
-            rxjs.take(x),
-            rxjs.map(i => index)
-        )}
-    )).subscribe(setSubscriber('concatMap'))
+rxjs.combineLatest(timer1$,timer2$,timer3$).pipe(rxjs.take(5))
+    .subscribe(setSubscriber('combineLatest'))
