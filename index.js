@@ -1,5 +1,3 @@
-// const { first } = rxjs;
-// const { filter, map } = rxjs.operators;
 const setSubscriber = (operatorName) => {
     return {
         next(x) {
@@ -14,27 +12,34 @@ const setSubscriber = (operatorName) => {
     }
 }
 
-// operator for CHOOSE
+rxjs.of('Hello ').subscribe(x => {
+    rxjs.of(x + 'World1!').subscribe(setSubscriber('mergeMap'))
+})
+// ALTernative
 
-rxjs.of(1,42,3, '4', "Angular", true)
-    .pipe(
-        // rxjs.first(),
-        // rxjs.last())
-        // rxjs.find(el => el===3))
-        // rxjs.findIndex(el => el=== 1))
-        // rxjs.take(3))
-        // rxjs.skip(3))
-        rxjs.skipWhile(el => {
-            return typeof el === 'number'
-        }))
-    .subscribe(
-        setSubscriber('map')
-    )
+rxjs.of('Hello ')
+    .pipe(rxjs.mergeMap(x => {
+        return rxjs.of(x + 'World2!')
+    }))
+    .subscribe(setSubscriber('mergeMap'))
 
-rxjs.interval(500)
-    .pipe(
-        rxjs.skipUntil(rxjs.timer(3000)),
-        rxjs.takeUntil(rxjs.timer(5000)))
-    .subscribe(
-        setSubscriber('map')
-    )
+const promise = (data) => {
+    return new Promise((res, rej) => {
+        setTimeout(() => {
+            res(data + ' wish me luck');
+        }, 2000)
+    })
+}
+
+rxjs.of('WFM')
+    .pipe(rxjs.mergeMap((x) => {
+        return promise(x)
+    })).subscribe(setSubscriber('promise'))
+
+rxjs.range(1,10)
+    .pipe(rxjs.concatMap((x, index) => {
+        return rxjs.interval(200).pipe(
+            rxjs.take(x),
+            rxjs.map(i => index)
+        )}
+    )).subscribe(setSubscriber('concatMap'))
