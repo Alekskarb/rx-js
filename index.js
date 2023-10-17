@@ -13,34 +13,21 @@ const setSubscriber = (operatorName) => {
         }
     }
 }
-//ZIP
-const s1$ = rxjs.of('Hello ')
-const s2$ = rxjs.of('World!')
-const interval$ = rxjs.interval(1000);
-const interval2$ = rxjs.interval(500).pipe(rxjs.take(3))
+// error Handling
+// rxjs.throw(new Error('Something went wrong'))
+rxjs.throwError(new Error('Something went wrong'))
+    .pipe(rxjs.catchError(error => rxjs.of(error)))
+    // .catch()
+    // .subscribe(x => {
+    //     console.log(x)
+    // } )
+    .subscribe(setSubscriber('catch'))
 
-rxjs.zip(s1$, s2$).subscribe(
-   setSubscriber('zip'));
+// rxjs.interval(500).pipe(rxjs.take(5)).subscribe(setSubscriber('interval'))
 
-// rxjs.zip(interval$, interval2$)
-// ALTernative
-// rxjs.zip(interval$, interval$.pipe(rxjs.take(3)))
-rxjs.zip(interval$, interval$.pipe(rxjs.take(3)), rxjs.of('wfm'))
-    .subscribe(
-        setSubscriber('zip'))
+const s1$ = rxjs.throwError(new Error('Something went wrong'))
+const s2$ = rxjs.interval(500).pipe(rxjs.take(2))
 
-const int1$ = rxjs.interval(1000);
-const int2$ = rxjs.interval(500);
-
-// withLatestFrom
-// const result = clicks.pipe(withLatestFrom(timer));
-int1$.pipe(rxjs.withLatestFrom(int2$), rxjs.take(5))
-    .subscribe(setSubscriber('withLatestFrom'))
-
-// combineLatest
-const timer1$ = rxjs.timer(1000, 2000);
-const timer2$ = rxjs.timer(2000, 2000);
-const timer3$ = rxjs.timer(3000, 2000);
-
-rxjs.combineLatest(timer1$,timer2$,timer3$).pipe(rxjs.take(5))
-    .subscribe(setSubscriber('combineLatest'))
+// rxjs.pipe(s1$.onErrorResumeNext(s2$))
+rxjs.onErrorResumeNext(s1$, s2$)
+    .subscribe(setSubscriber('onErrorResumeNext'))
