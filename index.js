@@ -1,5 +1,3 @@
-// import Rx from "https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js";
-
 const setSubscriber = (operatorName) => {
     return {
         next(x) {
@@ -13,21 +11,59 @@ const setSubscriber = (operatorName) => {
         }
     }
 }
-// error Handling
-// rxjs.throw(new Error('Something went wrong'))
-rxjs.throwError(new Error('Something went wrong'))
-    .pipe(rxjs.catchError(error => rxjs.of(error)))
-    // .catch()
-    // .subscribe(x => {
-    //     console.log(x)
-    // } )
-    .subscribe(setSubscriber('catch'))
+// SUBJECTS
+const subject$ = new rxjs.Subject();
+// Example #1
+// behaviour as Observable
+subject$.subscribe(setSubscriber('subject'))
 
-// rxjs.interval(500).pipe(rxjs.take(5)).subscribe(setSubscriber('interval'))
+// behaviour as observer
+subject$.next(1);
+subject$.next(2);
 
-const s1$ = rxjs.throwError(new Error('Something went wrong'))
-const s2$ = rxjs.interval(500).pipe(rxjs.take(2))
+setTimeout(() => {
+    subject$.next(3);
+    subject$.complete()
+    },1000)
+// subject$.complete()
 
-// rxjs.pipe(s1$.onErrorResumeNext(s2$))
-rxjs.onErrorResumeNext(s1$, s2$)
-    .subscribe(setSubscriber('onErrorResumeNext'))
+const int$ = rxjs.interval(2000)
+// behaviour as Observable
+int$.subscribe(subject$)
+
+//Example #2
+// BEHAVIOUR-SUBJECTS
+const behaviourSubj$ = new rxjs.BehaviorSubject('Behaviour');
+
+// 1 - behaviour as Observable
+behaviourSubj$.subscribe(setSubscriber('BehaviorSubject'))
+
+// 2 - behaviour as observer
+behaviourSubj$.next('Subject');
+// behaviourSubj$.next(2);
+
+//Example #3
+// REPLAY-SUBJECTS
+const replaySubj$ = new rxjs.ReplaySubject(2);
+// 1 - behaviour as observers
+replaySubj$.next(1);
+replaySubj$.next(2);
+replaySubj$.next(3);
+// replaySubj$.complete()
+
+// 2 - behaviour as Observable !!!
+replaySubj$.subscribe(setSubscriber('ReplaySubject'))
+
+//Example #4
+// REPLAY-SUBJECTS
+const asyncSubject$ = new rxjs.AsyncSubject (2);
+// 1 - behaviour as observers
+asyncSubject$.next(1);
+asyncSubject$.next(2);
+asyncSubject$.next('message');
+asyncSubject$.complete()
+
+// 2 - behaviour as Observable !!!
+asyncSubject$.subscribe(setSubscriber('AsyncSubject'))
+
+
